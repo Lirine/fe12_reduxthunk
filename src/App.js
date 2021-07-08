@@ -1,25 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import {getCards, getStatuses} from "./redux/actions";
+import {connect} from "react-redux";
+import {useEffect} from "react";
+import Column from "./Column";
+import AddModal from "./AddModal";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App(props) {
+
+    useEffect(() => {
+        props.getStatuses()
+        props.getCards()
+    }, [])
+
+    return (
+        <div className="App">
+            <h3>Kanban Board Redux Thunk</h3>
+            <div className="container">
+                <AddModal/>
+                <div className="row align-items-start">
+                    {props.statuses.map(el => <Column key={el._id} {...el}/>)}
+                </div>
+            </div>
+
+
+        </div>
+    );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+    statuses: state.statuses
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    getStatuses: () => dispatch(getStatuses()),
+    getCards: () => dispatch(getCards())
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
